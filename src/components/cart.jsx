@@ -1,5 +1,6 @@
-import React, { Component, useState } from "react";
+import React, { useRef, useState } from "react";
 import Counter from "./counter";
+const { v4: uuidv4 } = require("uuid");
 
 function Cart() {
   const [items, setItems] = useState([
@@ -8,9 +9,22 @@ function Cart() {
     { id: 3, itemName: "USB-Kabel" },
     { id: 4, itemName: "Lightning-Kabel" },
   ]);
+  const newItemRef = useRef();
 
   const handleAdd = () => {
-    setItems([...items, { id: items.length, itemName: items.length }]);
+    if (newItemRef.current.value) {
+      const newItems = items;
+      setItems([
+        ...newItems,
+        { id: uuidv4(), itemName: newItemRef.current.value },
+      ]);
+      newItemRef.current.value = null;
+    }
+  };
+
+  const deleteItem = (id) => {
+    const newItems = items.filter((item) => !(item.id === id));
+    setItems(newItems);
   };
 
   const handleClear = () => {
@@ -20,12 +34,9 @@ function Cart() {
   return (
     <div>
       <h1>Your Shopping Cart!</h1>
-      <input
-        type="item"
-        class="form-control"
-        id="itemInput"
-        placeholder="New Item"
-      />
+      <div class="form-group">
+        <input ref={newItemRef} class="form-control" placeholder="New Item" />
+      </div>
       <button className="btn btn-primary m-1" onClick={handleAdd}>
         Add Item
       </button>
@@ -34,7 +45,7 @@ function Cart() {
       </button>
       <ol>
         {items.map((item) => (
-          <Counter key={item} name={item.itemName} />
+          <Counter key={item.id} deleteItem={deleteItem} item={item} />
         ))}
       </ol>
     </div>

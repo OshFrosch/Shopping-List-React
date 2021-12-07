@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
-function Counter({ name }) {
-  const [itemName] = useState(name);
+function Counter({ item, deleteItem }) {
+  const [itemName] = useState(item.itemName);
   const [quantity, setQuantity] = useState(1);
 
   const handleIncrement = (operation) => {
@@ -11,6 +11,10 @@ function Counter({ name }) {
 
   const renderQuantity = () => {
     return quantity === 0 ? "Empty" : quantity;
+  };
+
+  const handleDelete = () => {
+    deleteItem(item.id);
   };
 
   return (
@@ -40,7 +44,11 @@ function Counter({ name }) {
         {renderQuantity()}
       </strong>
       {quantity === 0 ? (
-        <button style={{ fontSize: 15, padding: 2 }} className="btn btn-danger">
+        <button
+          onClick={handleDelete}
+          style={{ fontSize: 15, padding: 2 }}
+          className="btn btn-danger"
+        >
           Remove
         </button>
       ) : null}
